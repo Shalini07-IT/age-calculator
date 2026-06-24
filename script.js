@@ -1,341 +1,286 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter,Segoe UI,sans-serif;
-}
+const dobInput = document.getElementById("dob");
+const button = document.getElementById("calculateBtn");
+const results = document.getElementById("results");
+const error = document.getElementById("error");
+const loader = document.getElementById("loader");
 
-body{
-    min-height:100vh;
-    overflow-x:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(-45deg,#090909,#120b25,#1f1040,#0d2f40);
-    background-size:400% 400%;
-    animation:bgMove 12s ease infinite;
-    padding:20px;
-    position:relative;
-}
+const yearsEl = document.getElementById("years");
+const monthsEl = document.getElementById("months");
+const daysEl = document.getElementById("days");
 
-@keyframes bgMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-}
+createParticles();
+mouseLight();
+tiltCards();
 
-.container{
-    width:100%;
-    max-width:900px;
-    z-index:2;
-}
+button.addEventListener("click", calculateAge);
 
-.glass-card{
-    backdrop-filter:blur(25px);
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:30px;
-    padding:40px;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.4),
-        inset 0 1px 1px rgba(255,255,255,.2);
-}
+function calculateAge() {
 
-.title{
-    text-align:center;
-    font-size:3rem;
-    margin-bottom:10px;
-    background:linear-gradient(90deg,#00f5ff,#9d4dff,#00e1ff);
-    background-size:300%;
-    -webkit-background-clip:text;
-    color:transparent;
-    animation:gradientText 5s linear infinite;
-}
+    error.textContent = "";
 
-@keyframes gradientText{
-    0%{background-position:0%}
-    100%{background-position:300%}
-}
+    const dobValue = dobInput.value;
 
-.subtitle{
-    text-align:center;
-    color:#cfcfcf;
-    margin-bottom:35px;
-}
-
-.input-group{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-label{
-    color:white;
-}
-
-input{
-    padding:16px;
-    border:none;
-    outline:none;
-    border-radius:15px;
-    background:rgba(255,255,255,.08);
-    color:white;
-    font-size:1rem;
-    border:1px solid rgba(255,255,255,.12);
-    transition:.3s;
-}
-
-input:focus{
-    box-shadow:
-      0 0 20px #00f5ff,
-      0 0 40px rgba(0,245,255,.4);
-    border-color:#00f5ff;
-}
-
-button{
-    width:100%;
-    margin-top:20px;
-    padding:16px;
-    border:none;
-    border-radius:16px;
-    background:linear-gradient(135deg,#6f3cff,#00d9ff);
-    color:white;
-    font-size:1rem;
-    cursor:pointer;
-    transition:.3s;
-    font-weight:600;
-}
-
-button:hover{
-    transform:translateY(-3px) scale(1.03);
-    box-shadow:
-        0 0 20px #00eaff,
-        0 0 50px rgba(0,234,255,.5);
-}
-
-.error{
-    margin-top:15px;
-    color:#ff6b81;
-    text-align:center;
-    min-height:25px;
-}
-
-.shake{
-    animation:shake .4s;
-}
-
-@keyframes shake{
-    0%,100%{transform:translateX(0)}
-    20%{transform:translateX(-8px)}
-    40%{transform:translateX(8px)}
-    60%{transform:translateX(-8px)}
-    80%{transform:translateX(8px)}
-}
-
-.loader{
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    gap:15px;
-    margin:30px 0;
-}
-
-.spinner{
-    width:60px;
-    height:60px;
-    border:4px solid rgba(255,255,255,.2);
-    border-top:4px solid cyan;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg);}
-}
-
-.results{
-    display:none;
-    margin-top:30px;
-}
-
-.main-age{
-    text-align:center;
-    padding:30px;
-    border-radius:25px;
-    background:rgba(255,255,255,.05);
-    border:1px solid rgba(255,255,255,.1);
-}
-
-.main-age h2{
-    color:#ddd;
-}
-
-.age-display{
-    margin-top:10px;
-    font-size:2.5rem;
-    font-weight:700;
-    color:#00f5ff;
-}
-
-.age-display span{
-    color:white;
-}
-
-.pulse-card{
-    animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-    0%{
-        box-shadow:0 0 0 0 rgba(0,255,255,.4);
+    if (!dobValue) {
+        showError("Please select your date of birth.");
+        return;
     }
-    70%{
-        box-shadow:0 0 0 25px rgba(0,255,255,0);
+
+    const birthDate = new Date(dobValue);
+    const today = new Date();
+
+    if (birthDate > today) {
+        showError("Future dates are not allowed.");
+        return;
     }
-    100%{
-        box-shadow:0 0 0 0 rgba(0,255,255,0);
+
+    results.style.display = "none";
+    loader.style.display = "flex";
+
+    setTimeout(() => {
+
+        loader.style.display = "none";
+
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let months = today.getMonth() - birthDate.getMonth();
+        let days = today.getDate() - birthDate.getDate();
+
+        if (days < 0) {
+            months--;
+            const prevMonth = new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                0
+            );
+            days += prevMonth.getDate();
+        }
+
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        const diffMs = today - birthDate;
+
+        const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const totalWeeks = Math.floor(totalDays / 7);
+        const totalMonths = years * 12 + months;
+        const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+        results.style.display = "block";
+
+        animateNumber(yearsEl, years);
+        animateNumber(monthsEl, months);
+        animateNumber(daysEl, days);
+
+        animateNumber(
+            document.getElementById("totalMonths"),
+            totalMonths
+        );
+
+        animateNumber(
+            document.getElementById("totalWeeks"),
+            totalWeeks
+        );
+
+        animateNumber(
+            document.getElementById("totalDays"),
+            totalDays
+        );
+
+        animateNumber(
+            document.getElementById("totalHours"),
+            totalHours
+        );
+
+        document
+            .querySelectorAll(".stat-card")
+            .forEach((card, index) => {
+
+                card.classList.remove("show");
+
+                setTimeout(() => {
+                    card.classList.add("show");
+                }, index * 200);
+            });
+
+        launchConfetti();
+
+    }, 1200);
+}
+
+function showError(message) {
+
+    error.textContent = message;
+
+    error.classList.remove("shake");
+
+    void error.offsetWidth;
+
+    error.classList.add("shake");
+}
+
+function animateNumber(element, target) {
+
+    let start = 0;
+
+    const duration = 1500;
+
+    const increment = target / (duration / 16);
+
+    const timer = setInterval(() => {
+
+        start += increment;
+
+        if (start >= target) {
+            element.textContent = target.toLocaleString();
+            clearInterval(timer);
+        } else {
+            element.textContent =
+            Math.floor(start).toLocaleString();
+        }
+
+    }, 16);
+}
+
+function createParticles() {
+
+    const container =
+    document.getElementById("particles");
+
+    for (let i = 0; i < 50; i++) {
+
+        const particle =
+        document.createElement("div");
+
+        particle.classList.add("particle");
+
+        const size = Math.random() * 6 + 2;
+
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+        particle.style.left =
+        Math.random() * 100 + "%";
+
+        particle.style.animationDuration =
+        Math.random() * 10 + 8 + "s";
+
+        particle.style.opacity = Math.random();
+
+        container.appendChild(particle);
     }
 }
 
-.stats-grid{
-    margin-top:25px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:20px;
+function mouseLight() {
+
+    const light =
+    document.querySelector(".mouse-light");
+
+    document.addEventListener("mousemove", e => {
+
+        light.style.left = e.clientX + "px";
+        light.style.top = e.clientY + "px";
+    });
 }
 
-.stat-card{
-    text-align:center;
-    padding:25px;
-    border-radius:20px;
-    background:rgba(255,255,255,.05);
-    border:1px solid rgba(255,255,255,.1);
-    transition:.3s;
-    opacity:0;
-    transform:translateY(30px);
+function tiltCards() {
+
+    document.addEventListener("mousemove", e => {
+
+        document
+        .querySelectorAll(".tilt-card")
+        .forEach(card => {
+
+            const rect =
+            card.getBoundingClientRect();
+
+            const x =
+            e.clientX - rect.left;
+
+            const y =
+            e.clientY - rect.top;
+
+            const rotateY =
+            (x - rect.width/2) / 25;
+
+            const rotateX =
+            -(y - rect.height/2) / 25;
+
+            card.style.transform =
+            `perspective(1000px)
+             rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)`;
+        });
+    });
 }
 
-.stat-card h3{
-    color:#ccc;
-}
+function launchConfetti() {
 
-.stat-card p{
-    margin-top:10px;
-    color:#00f5ff;
-    font-size:1.8rem;
-    font-weight:700;
-}
+    const canvas =
+    document.getElementById("confetti");
 
-.show{
-    animation:reveal .7s forwards;
-}
+    const ctx =
+    canvas.getContext("2d");
 
-@keyframes reveal{
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 
-.fade-in{
-    animation:fadeIn 1.2s ease;
-}
+    const pieces = [];
 
-@keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:translateY(40px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
+    for (let i = 0; i < 200; i++) {
 
-.particles{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    pointer-events:none;
-}
-
-.particle{
-    position:absolute;
-    border-radius:50%;
-    background:rgba(0,255,255,.5);
-    animation:float linear infinite;
-}
-
-@keyframes float{
-    from{
-        transform:translateY(100vh);
-    }
-    to{
-        transform:translateY(-120px);
-    }
-}
-
-.floating-orb{
-    position:fixed;
-    border-radius:50%;
-    filter:blur(70px);
-    z-index:0;
-}
-
-.orb1{
-    width:250px;
-    height:250px;
-    background:#9d4dff;
-    top:10%;
-    left:5%;
-}
-
-.orb2{
-    width:220px;
-    height:220px;
-    background:#00d9ff;
-    right:5%;
-    top:60%;
-}
-
-.orb3{
-    width:180px;
-    height:180px;
-    background:#5d6bff;
-    bottom:5%;
-    left:40%;
-}
-
-.mouse-light{
-    position:fixed;
-    width:250px;
-    height:250px;
-    border-radius:50%;
-    pointer-events:none;
-    background:radial-gradient(circle,
-    rgba(0,255,255,.2),
-    transparent 70%);
-    transform:translate(-50%,-50%);
-    z-index:1;
-}
-
-#confetti{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-}
-
-@media(max-width:768px){
-
-    .title{
-        font-size:2.2rem;
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: -20,
+            size: Math.random() * 8 + 4,
+            speed: Math.random() * 4 + 2,
+            color: [
+                "#00f5ff",
+                "#9d4dff",
+                "#ffffff",
+                "#5d6bff"
+            ][Math.floor(Math.random()*4)]
+        });
     }
 
-    .glass-card{
-        padding:25px;
+    let frame = 0;
+
+    function animate() {
+
+        frame++;
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        pieces.forEach(p => {
+
+            p.y += p.speed;
+
+            ctx.fillStyle = p.color;
+
+            ctx.fillRect(
+                p.x,
+                p.y,
+                p.size,
+                p.size
+            );
+        });
+
+        if(frame < 180){
+            requestAnimationFrame(animate);
+        }
+        else{
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+        }
     }
 
-    .age-display{
-        font-size:1.8rem;
-    }
+    animate();
 }
