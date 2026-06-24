@@ -1,100 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Age Calculator — Discover Your Time</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Age Calculator</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Animated background layers -->
-  <div class="bg-gradient"></div>
-  <div class="bg-grid"></div>
-  <div class="particles" id="particles"></div>
-  <div class="mouse-glow" id="mouseGlow"></div>
+    <div class="mouse-light"></div>
 
-  <div class="page">
+    <div class="particles" id="particles"></div>
 
-    <header class="hero fade-in">
-      <div class="badge">✦ Precision Time Calculator</div>
-      <h1 class="gradient-text">Age Calculator</h1>
-      <p class="subtitle">Enter your date of birth and uncover exactly how long you've been alive — down to the hour.</p>
-    </header>
+    <div class="floating-orb orb1"></div>
+    <div class="floating-orb orb2"></div>
+    <div class="floating-orb orb3"></div>
 
-    <main class="card glass tilt-card fade-in delay-1" id="mainCard">
-      <div class="card-glow"></div>
+    <div class="container fade-in">
 
-      <form id="ageForm" class="form" autocomplete="off">
-        <label for="dob" class="field-label">Date of birth</label>
-        <div class="input-wrap">
-          <input type="date" id="dob" name="dob" class="dob-input" required>
-          <span class="input-ring"></span>
+        <div class="glass-card tilt-card">
+
+            <h1 class="title">
+                Age Calculator
+            </h1>
+
+            <p class="subtitle">
+                Discover your exact age with stunning precision
+            </p>
+
+            <div class="input-group">
+                <label>Date of Birth</label>
+                <input type="date" id="dob">
+            </div>
+
+            <button id="calculateBtn">
+                Calculate Age
+            </button>
+
+            <div class="error" id="error"></div>
+
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <span>Calculating...</span>
+            </div>
+
+            <div class="results" id="results">
+
+                <div class="main-age pulse-card">
+                    <h2>Your Age</h2>
+                    <div class="age-display">
+                        <span id="years">0</span>Y
+                        <span id="months">0</span>M
+                        <span id="days">0</span>D
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card reveal tilt-card">
+                        <h3>Total Months</h3>
+                        <p class="counter" id="totalMonths">0</p>
+                    </div>
+
+                    <div class="stat-card reveal tilt-card">
+                        <h3>Total Weeks</h3>
+                        <p class="counter" id="totalWeeks">0</p>
+                    </div>
+
+                    <div class="stat-card reveal tilt-card">
+                        <h3>Total Days</h3>
+                        <p class="counter" id="totalDays">0</p>
+                    </div>
+
+                    <div class="stat-card reveal tilt-card">
+                        <h3>Total Hours</h3>
+                        <p class="counter" id="totalHours">0</p>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-        <p class="error-msg" id="errorMsg"></p>
 
-        <button type="submit" class="calc-btn" id="calcBtn">
-          <span class="btn-text">Calculate My Age</span>
-          <span class="btn-spark"></span>
-        </button>
-      </form>
+    </div>
 
-      <!-- Loader -->
-      <div class="loader" id="loader">
-        <div class="loader-ring"></div>
-        <div class="loader-ring ring2"></div>
-        <div class="loader-ring ring3"></div>
-        <p class="loader-text">Crunching the numbers…</p>
-      </div>
+    <canvas id="confetti"></canvas>
 
-      <!-- Results -->
-      <section class="results" id="results">
-        <div class="age-hero" id="ageHero">
-          <div class="age-pulse"></div>
-          <div class="age-big">
-            <span class="age-num" id="bigYears">0</span><span class="age-unit">y</span>
-            <span class="age-num" id="bigMonths">0</span><span class="age-unit">m</span>
-            <span class="age-num" id="bigDays">0</span><span class="age-unit">d</span>
-          </div>
-          <p class="age-caption">You've existed for exactly this long</p>
-        </div>
-
-        <div class="grid-stats" id="gridStats">
-          <div class="stat-card" style="--i:0">
-            <span class="stat-icon">📅</span>
-            <span class="stat-value" id="statMonths">0</span>
-            <span class="stat-label">Total Months</span>
-          </div>
-          <div class="stat-card" style="--i:1">
-            <span class="stat-icon">🗓️</span>
-            <span class="stat-value" id="statWeeks">0</span>
-            <span class="stat-label">Total Weeks</span>
-          </div>
-          <div class="stat-card" style="--i:2">
-            <span class="stat-icon">☀️</span>
-            <span class="stat-value" id="statDays">0</span>
-            <span class="stat-label">Total Days</span>
-          </div>
-          <div class="stat-card" style="--i:3">
-            <span class="stat-icon">⏰</span>
-            <span class="stat-value" id="statHours">0</span>
-            <span class="stat-label">Total Hours</span>
-          </div>
-        </div>
-
-        <button class="reset-btn" id="resetBtn">↺ Calculate Again</button>
-      </section>
-
-    </main>
-
-    <footer class="footer fade-in delay-2">
-      <p>Crafted with pure HTML, CSS &amp; JavaScript</p>
-    </footer>
-
-  </div>
-
-  <canvas id="confetti"></canvas>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
